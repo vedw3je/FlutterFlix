@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflix/screens/profile_screen.dart';
 import 'package:flutterflix/screens/trending_movie_screen.dart';
+
 import 'featured_movies_screen.dart';
 import 'movie_screen.dart';
 import '../services/movie_api.dart';
@@ -92,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Hello $userName',
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255)),
+                    color: const Color.fromARGB(255, 255, 255, 255)),
               ),
             ),
           ),
@@ -105,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 200, // Small width
           child: Drawer(
             backgroundColor: Colors.black.withOpacity(0.9),
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
             ),
             child: Column(
@@ -130,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      backgroundColor: Color.fromARGB(255, 255, 229, 229),
+      backgroundColor: const Color.fromARGB(255, 255, 229, 229),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -138,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _currentIndex = index;
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.movie),
             label: 'Featured',
@@ -193,6 +194,6 @@ class FeaturedMovies extends StatelessWidget {
 class TrendingMovies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TrendingMovieScreen();
+    return const TrendingMovieScreen();
   }
 }

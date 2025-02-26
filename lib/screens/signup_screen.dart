@@ -11,9 +11,9 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  double _age = 18;
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
+  //final TextEditingController ageController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -26,9 +26,17 @@ class _SignupScreenState extends State<SignupScreen> {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
     String name = nameController.text.trim();
-    String age = ageController.text.trim();
+    //String age = ageController.text.trim();
+    String age = _age.toString();
     String country = countryController.text.trim();
-
+    if (_age < 18) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Age must be 18 or above"),
+        ),
+      );
+      return;
+    }
     User? user = await authService.signUpWithEmailAndPassword(
         email, password, name, age, country, selectedGender!);
 
@@ -92,18 +100,60 @@ class _SignupScreenState extends State<SignupScreen> {
                         value!.isEmpty ? "Enter your name" : null,
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: ageController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration("Age"),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return "Enter your age";
-                      if (int.tryParse(value) == null || int.parse(value) <= 0)
-                        return "Enter a valid age";
-                      return null;
-                    },
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(34, 158, 158, 158),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey, width: 1.5),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Age',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Slider(
+                                value: _age,
+                                min: 1,
+                                max: 100,
+                                divisions: 99,
+                                activeColor: Colors.red,
+                                inactiveColor: Colors.grey,
+                                label: _age.round().toString(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _age = value;
+                                  });
+                                },
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _age.round().toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(

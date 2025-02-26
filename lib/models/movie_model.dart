@@ -55,7 +55,7 @@ class Movie {
       language: json['language'].toString(),
       genres: json['genres'] != null && json['genres'].isNotEmpty
           ? json['genres'][0]
-          : 'Unknown', // Default value if the genres list is empty or null
+          : 'Unknown',
       officialsite: json['officialSite'].toString(),
       type: json['type'].toString(),
       schedule: schedule,

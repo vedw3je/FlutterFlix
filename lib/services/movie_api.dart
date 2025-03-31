@@ -24,10 +24,10 @@ class MovieApi {
     }
   }
 
-  static Future<List<Movie>> fetchTrendingMovies() async {
-    const url =
-        'https://api.tvmaze.com/schedule/web?date=2020-05-29&country=IN';
-    final uri = Uri.parse(url);
+  static Future<List<Movie>> fetchTrendingMovies(String countryCode) async {
+    final String url =
+        'https://api.tvmaze.com/schedule/web?date=2020-05-29&country=$countryCode';
+    final Uri uri = Uri.parse(url);
 
     try {
       final response = await http.get(uri);

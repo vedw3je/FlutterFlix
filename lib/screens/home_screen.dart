@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterflix/screens/admin_dashboard.dart';
 import 'package:flutterflix/screens/profile_screen.dart';
 import 'package:flutterflix/screens/trending_movie_screen.dart';
 
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Movie> movies = [];
   String userName = "Loading...";
+  String userEmail = '';
   int _currentIndex = 0; // Track the selected tab
 
   // Placeholder screens
@@ -48,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (userDoc.exists) {
       setState(() {
         userName = userDoc['name'];
+        userEmail = userDoc['email'];
       });
     } else {
       setState(() {
@@ -102,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
       endDrawer: Align(
         alignment: Alignment.topRight, // Align to right center
         child: SizedBox(
-          height: 120, // Set custom height
+          height: 230, // Set custom height
           width: 200, // Small width
           child: Drawer(
             backgroundColor: Colors.black.withOpacity(0.9),
@@ -125,6 +128,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         '/subscription'); // Navigate to Subscription Page
                   },
                 ),
+                userEmail == "wajeved04@gmail.com"
+                    ? ListTile(
+                        leading: const Icon(Icons.dashboard_customize,
+                            color: Colors.red),
+                        title: const Text(
+                          "Admin Dashboard",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context); // Close Drawer
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AdminDashboard()),
+                          ); // Navigate to Subscription Page
+                        },
+                      )
+                    : const SizedBox(
+                        height: 5,
+                      )
               ],
             ),
           ),

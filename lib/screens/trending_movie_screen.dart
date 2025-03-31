@@ -4,6 +4,8 @@ import '../models/movie_model.dart';
 import '../services/movie_api.dart';
 import '../widgets/movie_list_item.dart';
 import 'movie_screen.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class TrendingMovieScreen extends StatefulWidget {
   const TrendingMovieScreen({super.key});
@@ -14,18 +16,59 @@ class TrendingMovieScreen extends StatefulWidget {
 
 class _TrendingMovieScreenState extends State<TrendingMovieScreen> {
   List<Movie> trendingmovies = [];
+  String countrycode = '';
   var moviecontroller = TextEditingController();
   @override
   void initState() {
     super.initState();
-    fetchtrendingMovies();
+    fetchTrendingMovies();
   }
 
-  Future<void> fetchtrendingMovies() async {
-    final response = await MovieApi.fetchTrendingMovies();
-    setState(() {
-      trendingmovies = response;
-    });
+  Future<void> fetchTrendingMovies() async {
+    try {
+      LocationPermission permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print("Location permission denied");
+      }
+
+      // Get the user's location
+      Position position = await Geolocator.getCurrentPosition(
+          // ignore: deprecated_member_use
+          desiredAccuracy: LocationAccuracy.high);
+
+      // Reverse geocode to get country name
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placemarks.isNotEmpty) {
+        String country = placemarks.first.country ?? "US"; // Default to US
+        String countryCode = _mapCountryToCode(country);
+
+        final response = await MovieApi.fetchTrendingMovies(countryCode);
+        setState(() {
+          trendingmovies = response;
+        });
+      }
+    } catch (e) {
+      print("Error fetching location: $e");
+    }
+  }
+
+// Function to map country name to country code
+  String _mapCountryToCode(String country) {
+    Map<String, String> countryCodes = {
+      "United States": "US",
+      "India": "IN",
+      "United Kingdom": "GB",
+      "Canada": "CA",
+      "Australia": "AU",
+      "Germany": "DE",
+      "France": "FR",
+      "Japan": "JP",
+      "China": "CN",
+      "Brazil": "BR",
+    };
+    return countryCodes[country] ?? "US"; // Default to US if not found
   }
 
   void searchMovie(String query) {
@@ -73,18 +116,18 @@ class _TrendingMovieScreenState extends State<TrendingMovieScreen> {
                 controller: moviecontroller,
                 onChanged: (value) {
                   if (trendingmovies.isEmpty) {
-                    fetchtrendingMovies();
+                    fetchTrendingMovies();
                   } else if (moviecontroller.text.isEmpty) {
-                    fetchtrendingMovies();
+                    fetchTrendingMovies();
                   } else {
                     searchMovie(moviecontroller.text);
                   }
                 },
                 onSubmitted: (value) {
                   if (moviecontroller.text.isEmpty) {
-                    fetchtrendingMovies();
+                    fetchTrendingMovies();
                   } else if (trendingmovies.isEmpty) {
-                    fetchtrendingMovies();
+                    fetchTrendingMovies();
                     moviecontroller.text = '';
                   } else {
                     searchMovie(moviecontroller.text);

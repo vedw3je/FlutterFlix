@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterflix/screens/qr_payment_screen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   final List<Map<String, dynamic>> plans = [
@@ -56,28 +57,26 @@ class SubscriptionScreen extends StatelessWidget {
         backgroundColor: Colors.black,
       ),
       backgroundColor: Color.fromARGB(255, 33, 0, 0),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              "Pick the best plan for you",
-              style: TextStyle(color: Colors.white, fontSize: 18),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Pick the best plan for you",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 290,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 children: plans.map((plan) {
                   return _buildSubscriptionCard(context, plan);
                 }).toList(),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -86,60 +85,64 @@ class SubscriptionScreen extends StatelessWidget {
       BuildContext context, Map<String, dynamic> plan) {
     return GestureDetector(
       onTap: () => _showPurchaseDialog(context, plan["name"]),
-      child: Container(
-        width: 300,
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Colors.redAccent, Colors.black],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          alignment: Alignment.center,
+          width: 330,
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Colors.redAccent, Colors.black],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
           ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              plan["name"],
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              plan["price"],
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white70,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            ...plan["features"].map<Widget>((feature) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.check_circle,
-                        color: Colors.white, size: 16),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        feature,
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 14),
-                      ),
-                    ),
-                  ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                plan["name"],
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-              );
-            }).toList(),
-          ],
+              ),
+              const SizedBox(height: 5),
+              Text(
+                plan["price"],
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              ...plan["features"].map<Widget>((feature) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.check_circle,
+                          color: Colors.white, size: 16),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          feature,
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
         ),
       ),
     );
@@ -169,6 +172,12 @@ class SubscriptionScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QRPaymentScreen(planName: planName),
+                  ),
+                );
                 _executePurchaseFunction(context, planName);
               },
               child: const Text("Yes", style: TextStyle(color: Colors.green)),

@@ -44,6 +44,13 @@ dependencies:
   firebase_auth: ^5.4.2
   cloud_firestore: ^5.6.3
   image_picker: ^1.1.2
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^6.0.7
+  fluttertoast: ^8.2.12
+  google_mlkit_barcode_scanning: ^0.14.1
+  
 
 dev_dependencies:
   flutter_test:

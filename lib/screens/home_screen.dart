@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflix/screens/admin_dashboard.dart';
+import 'package:flutterflix/screens/classic_movies.dart';
 import 'package:flutterflix/screens/profile_screen.dart';
 import 'package:flutterflix/screens/trending_movie_screen.dart';
 
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     FeaturedMovies(), // Featured Movies
     TrendingMovies(), // Trending Movies
+    ClassicMoviesScreen(),
     ProfileScreen(), // Profile
   ];
 
@@ -171,6 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.trending_up),
             label: 'Trending',
           ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.hotel_class), label: 'Classic'),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',

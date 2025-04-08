@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutterflix/widgets/filter_widget.dart';
 
@@ -5,6 +7,7 @@ import '../models/movie_model.dart';
 import '../services/movie_api.dart';
 import '../widgets/movie_list_item.dart';
 import 'movie_screen.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class FeaturedMoviesScreen extends StatefulWidget {
   @override
@@ -15,6 +18,11 @@ class _FeaturedMoviesScreenState extends State<FeaturedMoviesScreen> {
   List<Movie> movies = [];
   var moviecontroller = TextEditingController();
   Map<String, String?> selectedFilters = {}; // Store selected filters
+  late ScrollController _scrollController;
+  StreamSubscription? _gyroscopeSubscription;
+  Timer? _scrollTimer;
+  double tiltThreshold = 0.3; // Sensitivity: Lower = More Responsive
+  double scrollSpeed = 50.0;
 
   void _openFilters() async {
     final filters = await showModalBottomSheet<Map<String, String?>>(
@@ -39,6 +47,34 @@ class _FeaturedMoviesScreenState extends State<FeaturedMoviesScreen> {
   void initState() {
     super.initState();
     fetchMovies();
+    _scrollController = ScrollController();
+    _startListeningToTilt();
+  }
+
+  void _startListeningToTilt() {
+    _gyroscopeSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
+      double tilt = event.y;
+
+      // Stop previous scrolling when tilt is neutral
+      if (tilt.abs() < tiltThreshold) {
+        _scrollTimer?.cancel();
+        return;
+      }
+
+      // Start scrolling in the correct direction
+      _scrollTimer?.cancel();
+      _scrollTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+        double newOffset =
+            _scrollController.offset + (tilt > 0 ? scrollSpeed : -scrollSpeed);
+
+        // Ensure we don't scroll beyond list limits
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(
+            newOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+          );
+        }
+      });
+    });
   }
 
   Future<void> fetchMovies() async {
@@ -63,12 +99,15 @@ class _FeaturedMoviesScreenState extends State<FeaturedMoviesScreen> {
   @override
   void dispose() {
     moviecontroller.dispose();
+    _gyroscopeSubscription?.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      controller: _scrollController,
       physics: const BouncingScrollPhysics(),
       itemCount: 1,
       itemBuilder: (ctx, index) {

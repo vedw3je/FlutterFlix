@@ -52,6 +52,7 @@ dependencies:
   google_mlkit_barcode_scanning: ^0.14.1
   geocoding: ^3.0.0
   geolocator: ^13.0.4
+  sensors_plus: ^6.1.1
   
 
 dev_dependencies:

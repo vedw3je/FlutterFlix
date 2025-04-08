@@ -70,4 +70,27 @@ class Movie {
           : "https://cdn.pixabay.com/photo/2019/11/07/20/48/cinema-4609877_1280.jpg",
     );
   }
+
+  factory Movie.fromJson2(Map<String, dynamic> json) {
+    return Movie(
+      name: json['Title'],
+      imageurl: json['Images']?.isNotEmpty ?? false
+          ? json['Images'][1]
+          : json['Images'][0],
+      originimage: json['Images']?.isNotEmpty ?? false
+          ? json['Images'][0]
+          : json['Images'][1],
+      status: json['Rated'],
+      year: json['Year'],
+      runtime: json['Runtime'],
+      language: json['Language'],
+      genres: json['Genre'],
+      officialsite: '',
+      type: json['Type'],
+      schedule: Schedule.fromJson(json['schedule'] ?? {'time': '', 'days': []}),
+      rating: json['imdbRating'],
+      summary: json['Plot'],
+      network: '',
+    );
+  }
 }
